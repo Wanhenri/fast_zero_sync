@@ -9,3 +9,5 @@ pyenv activate meu-env
 
 # Desativar o ambiente virtual
 pyenv deactivate
+
+###
