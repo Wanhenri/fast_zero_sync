@@ -52,14 +52,34 @@ def test_update_user(client):
             'id': 1,
         },
     )
+    assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         'username': 'testusername2',
         'email': 'test@test.com',
         'id': 1,
     }
 
+    # Supondo que o banco de dados esteja vazio ou tenha menos de 100 usuários
+    invalid_user_id = 999  # um ID que com certeza não existe
+    user_data = {
+        'password': 'password',
+        'username': 'testusername2',
+        'email': 'test@test.com',
+    }
+
+    response = client.put(f'/users/{invalid_user_id}', json=user_data)
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found'}
+
 
 def test_delete_user(client):
     response = client.delete('/users/1')
 
+    assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'User deleted!'}
+
+    response = client.delete('/users/1')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found'}
